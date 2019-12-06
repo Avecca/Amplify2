@@ -40,8 +40,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func infoBtnPressed(_ sender: Any) {
         self.infoLbl.text = ""
         print("TRYING TO Fetch Specific")
-        
-        
+
         if idTxtView.text!.count < 1 {
             return
         }else {
@@ -159,14 +158,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
              }
              
              print("Fetch Specific Query complete")
-
+            var pers = ""
             //result?.data?.getTodo?.snapshot {
-            pers += (result?.data?.getTodo!.name)! + (result?.data?.getTodo!.description)!
-           // pers += (result?.data?.getTodo!.description)!
+            if(result != nil){
+                
+                pers += ((result?.data?.getTodo!.name) ?? "notf")  + ((result?.data?.getTodo!.description) ?? "ntfound")
+                // pers += (result?.data?.getTodo!.description)!
             
-            print(" ")
-            print(pers)
-            print(" ")
+                print(" ")
+                print(pers)
+                print(" ")
+            }
             
             self.infoLbl.text =  pers
         }

@@ -9,5 +9,8 @@ target 'Amplify2' do
 
     pod 'AWSCore'
     pod 'AWSAppSync'
+    pod 'AWSMobileClient'
+    pod 'AWSAuthUI'
+    pod 'AWSUserPoolsSignIn'
 
 end
