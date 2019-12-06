@@ -7,7 +7,7 @@ target 'Amplify2' do
 
   # Pods for Amplify2
 
-    pod 'AWSCore', '~> 2.10.2'
-    pod 'AWSAppSync', '~> 2.14.2'
+    pod 'AWSCore'
+    pod 'AWSAppSync'
 
 end

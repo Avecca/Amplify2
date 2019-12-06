@@ -151,7 +151,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
      func runSpecificQuery( id: String){
          print("Entering specific query")
         var pers = ""
-        appSyncClient?.fetch(query: GetTodoQuery(id: id), cachePolicy: .fetchIgnoringCacheData) { (result, error) in
+        appSyncClient?.fetch(query: GetTodoQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
              
              if error != nil{
                  print(error?.localizedDescription ?? "error fetching")
@@ -182,7 +182,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         print("ENTERING runQuery")
     
-        appSyncClient?.fetch(query: ListTodosQuery(), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
+        appSyncClient?.fetch(query: ListTodosQuery(), cachePolicy: .fetchIgnoringCacheData) { (result, error) in
             //fetchIgnoringCacheData, returnCacheDataAndFetch
             if error != nil{
                 print(error?.localizedDescription ?? "error fetching")
