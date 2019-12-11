@@ -21,8 +21,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var nameTableView: UITableView!
     @IBOutlet weak var infoLbl: UILabel!
     @IBOutlet weak var idTxtView: UITextField!
-    @IBOutlet weak var signInStateLbl: UILabel!
     @IBOutlet weak var userNameLbl: UILabel!
+    
+    @IBOutlet weak var signINStateBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,10 +37,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
         
-        subscribe()
-        //runQuery()
+        //subscribe()
+       // runQuery()
         print(self.personList?.count as Any)
-        nameTableView.reloadData()
+        //nameTableView.reloadData()
         
     }
     
@@ -54,20 +55,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch(userState){
                 case .signedIn:
                         DispatchQueue.main.async {
-                            self.signInStateLbl.text = "Logged In"
+                            self.signINStateBtn.titleLabel?.text = "Log Out"
+                            self.userNameLbl.text = AWSMobileClient.default().username
+                            self.runQuery()
                     }
                 case .signedOut:
                     
-                    DispatchQueue.main.async {
-                        self.signInStateLbl.text = "Logged Out"
-                    }
-//                    AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, { (userState, error) in
-//                            if(error == nil){       //Successful signin
-//                                DispatchQueue.main.async {
-//                                    self.signInStateLbl.text = "Logged In"
-//                                }
-//                            }
-//                        })
+                    AWSMobileClient.default().showSignIn(navigationController: self.navigationController!,
+                        signInUIOptions: SignInUIOptions(canCancel: false, logoImage: #imageLiteral(resourceName: "Logo")),{ (userState, error) in
+                        if let signInState = userState {
+                            
+                            print("Sign in flow completed: \(signInState)")
+                            DispatchQueue.main.async {
+                                self.signINStateBtn.titleLabel?.text = "Log Out"
+                                self.userNameLbl.text = AWSMobileClient.default().username
+                                self.runQuery()
+                            }
+                            }else if let error = error {
+                                print("error logging in: \(error.localizedDescription)")
+                            DispatchQueue.main.async {
+                                self.signINStateBtn.titleLabel?.text = "Log In"
+                                self.userNameLbl.text = ""
+                            }
+                            }
+                        
+                        })
+                    
                 default:
                     AWSMobileClient.default().signOut()
                 }
@@ -78,6 +91,131 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     }
     
+    @IBAction func logOutPressed(_ sender: Any) {
+        
+        AWSMobileClient.default().signOut()
+        
+        
+        do {
+            try appSyncClient?.clearCaches()
+            
+            DispatchQueue.main.async {
+                
+                    self.signInState()
+                
+            }
+        } catch let err  {
+            print(err.localizedDescription)
+        }
+        
+        
+
+    }
+    
+    @IBAction func logOutBtnPressed(_ sender: Any) {
+        AWSMobileClient.default().signOut()
+        
+        
+        do {
+            try appSyncClient?.clearCaches()
+        } catch let err  {
+            print(err.localizedDescription)
+        }
+        
+        
+        DispatchQueue.main.async {
+            
+                self.signInState()
+        }
+    }
+    
+    //                    DispatchQueue.main.async {
+    //                        self.signInStateLbl.text = "Logged Out"
+    //                    }
+    
+    //                            if(error == nil){       //Successful signin
+    //                                DispatchQueue.main.async {
+    //                                    self.signInStateLbl.text = "Logged In"
+    //                                }
+    //                            }
+//
+//    func signInStateWithSignUpPage(){
+//
+//        AWSMobileClient.default().signUp(username: "your_username",
+//                                                password: "Abc@123!",
+//                                                userAttributes: ["email":"john@doe.com", "phone_number": "+1973123456"]) { (signUpResult, error) in
+//            if let signUpResult = signUpResult {
+//                switch(signUpResult.signUpConfirmationState) {
+//                case .confirmed:
+//                    print("User is signed up and confirmed.")
+//                case .unconfirmed:
+//                    print("User is not confirmed and needs verification via \(signUpResult.codeDeliveryDetails!.deliveryMedium) sent at \(signUpResult.codeDeliveryDetails!.destination!)")
+//                case .unknown:
+//                    print("Unexpected case")
+//                }
+//            } else if let error = error {
+//                if let error = error as? AWSMobileClientError {
+//                    switch(error) {
+//                    case .usernameExists(let message):
+//                        print(message)
+//                    default:
+//                        break
+//                    }
+//                }
+//                print("\(error.localizedDescription)")
+//            }
+//        }
+//
+//
+//    }
+//
+//    func confirmSignUp() {
+//        AWSMobileClient.default().confirmSignUp(username: "your_username", confirmationCode: signUpCodeTextField.text!) { (signUpResult, error) in
+//            if let signUpResult = signUpResult {
+//                switch(signUpResult.signUpConfirmationState) {
+//                case .confirmed:
+//                    print("User is signed up and confirmed.")
+//                case .unconfirmed:
+//                    print("User is not confirmed and needs verification via \(signUpResult.codeDeliveryDetails!.deliveryMedium) sent at \(signUpResult.codeDeliveryDetails!.destination!)")
+//                case .unknown:
+//                    print("Unexpected case")
+//                }
+//            } else if let error = error {
+//                print("\(error.localizedDescription)")
+//            }
+//        }
+//    }
+    
+//    func resendConformSignup(){
+//        AWSMobileClient.default().resendSignUpCode(username: "your_username", completionHandler: { (result, error) in
+//            if let signUpResult = result {
+//                print("A verification code has been sent via \(signUpResult.codeDeliveryDetails!.deliveryMedium) at \(signUpResult.codeDeliveryDetails!.destination!)")
+//            } else if let error = error {
+//                print("\(error.localizedDescription)")
+//            }
+//        })
+//
+//    }
+    
+    
+    
+//    func signIn(){
+//        AWSMobileClient.default().signIn(username: "your_username", password: "Abc@123!") { (signInResult, error) in
+//            if let error = error  {
+//                print("\(error.localizedDescription)")
+//            } else if let signInResult = signInResult {
+//                switch (signInResult.signInState) {
+//                case .signedIn:
+//                    print("User is signed in.")
+//                case .smsMFA:
+//                    print("SMS message sent to \(signInResult.codeDetails!.destination!)")
+//                default:
+//                    print("Sign In needs info which is not et supported.")
+//                }
+//            }
+//        }
+//
+//    }
     
     
     
@@ -207,7 +345,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //result?.data?.getTodo?.snapshot {
             if(result != nil){
                 
-                pers += ((result?.data?.getTodo!.name) ?? "notf")  + ((result?.data?.getTodo!.description) ?? "ntfound")
+                pers =  ((result?.data?.getTodo!.description) ?? "ntfound")
                 // pers += (result?.data?.getTodo!.description)!
             
                 print(" ")
@@ -263,7 +401,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func subscribe() {
         //TODO OWNER
         do {
-            discard = try appSyncClient?.subscribe(subscription: OnCreateTodoSubscription(owner: "String"), resultHandler: { (result, transaction, error) in
+            discard = try appSyncClient?.subscribe(subscription: OnCreateTodoSubscription(owner: AWSMobileClient.default().identityId!), resultHandler: { (result, transaction, error) in
                 if let result = result{
                     print("CreateTodo sub data: " + result.data!.onCreateTodo!.name + " " + result.data!.onCreateTodo!.description!)
                     self.runQuery()
