@@ -10,6 +10,21 @@
             "StackName": "amplify-amplify2-amplifytwo-164918",
             "StackId": "arn:aws:cloudformation:eu-west-1:819742901655:stack/amplify-amplify2-amplifytwo-164918/7901cf70-15e4-11ea-a854-024980a27cd8",
             "AmplifyAppId": "d3vy2vbqormewc"
+        },
+        "categories": {
+            "function": {
+                "amplify21b1ee460CustomMessage": {
+                    "REDIRECTURL": "https://sum.network",
+                    "EMAILSUBJECT": "Join Sum.network",
+                    "EMAILMESSAGE": "Thank you for joining Sum.network, verify your email by clicking the link below:"
+                },
+                "amplify21b1ee460PostConfirmation": {
+                    "GROUP": "User"
+                }
+            },
+            "auth": {
+                "amplify21b1ee460": {}
+            }
         }
     }
 }

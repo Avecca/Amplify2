@@ -8,6 +8,7 @@
 
 import UIKit
 import AWSAppSync
+import AWSMobileClient
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -20,9 +21,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var nameTableView: UITableView!
     @IBOutlet weak var infoLbl: UILabel!
     @IBOutlet weak var idTxtView: UITextField!
+    @IBOutlet weak var signInStateLbl: UILabel!
+    @IBOutlet weak var userNameLbl: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        //sign in auth user
+        signInState()
         
         nameTableView.delegate = self
         nameTableView.dataSource = self
@@ -36,6 +42,45 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         nameTableView.reloadData()
         
     }
+    
+    func signInState(){
+        
+
+        AWSMobileClient.default().initialize { (userState, error) in
+            if let userState = userState {
+                print("UserState: \(userState.rawValue)")
+                //self.signInState(userState: userState)
+                
+                switch(userState){
+                case .signedIn:
+                        DispatchQueue.main.async {
+                            self.signInStateLbl.text = "Logged In"
+                    }
+                case .signedOut:
+                    
+                    DispatchQueue.main.async {
+                        self.signInStateLbl.text = "Logged Out"
+                    }
+//                    AWSMobileClient.default().showSignIn(navigationController: self.navigationController!, { (userState, error) in
+//                            if(error == nil){       //Successful signin
+//                                DispatchQueue.main.async {
+//                                    self.signInStateLbl.text = "Logged In"
+//                                }
+//                            }
+//                        })
+                default:
+                    AWSMobileClient.default().signOut()
+                }
+            } else if let error = error {
+                print("error: \(error.localizedDescription)")
+            }
+        }
+
+    }
+    
+    
+    
+    
     
     @IBAction func infoBtnPressed(_ sender: Any) {
         self.infoLbl.text = ""
@@ -149,7 +194,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
      func runSpecificQuery( id: String){
          print("Entering specific query")
-        var pers = ""
+        //var pers = ""
         appSyncClient?.fetch(query: GetTodoQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
              
              if error != nil{
@@ -184,6 +229,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         print("ENTERING runQuery")
     
+        
         appSyncClient?.fetch(query: ListTodosQuery(), cachePolicy: .fetchIgnoringCacheData) { (result, error) in
             //fetchIgnoringCacheData, returnCacheDataAndFetch
             if error != nil{
@@ -215,9 +261,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //realtime subscription to data
     func subscribe() {
-        
+        //TODO OWNER
         do {
-            discard = try appSyncClient?.subscribe(subscription: OnCreateTodoSubscription(), resultHandler: { (result, transaction, error) in
+            discard = try appSyncClient?.subscribe(subscription: OnCreateTodoSubscription(owner: "String"), resultHandler: { (result, transaction, error) in
                 if let result = result{
                     print("CreateTodo sub data: " + result.data!.onCreateTodo!.name + " " + result.data!.onCreateTodo!.description!)
                     self.runQuery()
