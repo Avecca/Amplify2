@@ -7,13 +7,17 @@
 //
 
 import Foundation
+import AWSAppSync
+import AWSMobileClient
 
 class Person {
+    var id: GraphQLID!
     var name : String?
-    var description: String?
+    var surname: String?
     
-    init(name: String, desc: String) {
+    init(id: GraphQLID, name: String, surname: String) {
+        self.id = id
         self.name = name
-        self.description = desc
+        self.surname = surname
     }
 }

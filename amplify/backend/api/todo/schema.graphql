@@ -1,11 +1,23 @@
-type Todo 
+type User 
   @model 
   @auth(
     rules: [
       {allow: owner, ownerField: "owner", operations: [create, update, delete, read]},
     ]){
   id: ID!
-  name: String!
-  description: String
+  name: String
+  surname: String
+  languages: [CodeLanguage]
   owner: String
+  
+}
+
+type CodeLanguage 
+   @model 
+   @auth( 
+    rules: [
+      {allow: owner, operations: [create, update, delete, read]},
+    ]){
+  id: ID!
+  type: String!
 }

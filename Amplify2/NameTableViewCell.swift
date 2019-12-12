@@ -9,8 +9,6 @@
 import UIKit
 
 class NameTableViewCell: UITableViewCell {
-
-    @IBOutlet weak var nameLbl: UILabel!
     
     @IBOutlet weak var descLbl: UILabel!
     override func awakeFromNib() {
@@ -19,12 +17,11 @@ class NameTableViewCell: UITableViewCell {
     }
 
 
-    func configCell(name: String, description: String){  //pet: Pet //Pet
-        if name != "" {
+    func configCell(language: String){  //pet: Pet //Pet
+        if language != "" {
 
           
-            nameLbl?.text = name
-            descLbl.text = description
+            descLbl.text = language
             
         }
         
