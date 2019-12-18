@@ -5,8 +5,8 @@ import AWSAppSync
 public struct CreateUserInput: GraphQLMapConvertible {
   public var graphQLMap: GraphQLMap
 
-  public init(id: GraphQLID? = nil, name: String? = nil, surname: String? = nil, owner: String? = nil) {
-    graphQLMap = ["id": id, "name": name, "surname": surname, "owner": owner]
+  public init(id: GraphQLID? = nil, name: String? = nil, surname: String? = nil, languages: [CodeLanguageInput?]? = nil, owner: String? = nil) {
+    graphQLMap = ["id": id, "name": name, "surname": surname, "languages": languages, "owner": owner]
   }
 
   public var id: GraphQLID? {
@@ -36,12 +36,47 @@ public struct CreateUserInput: GraphQLMapConvertible {
     }
   }
 
+  public var languages: [CodeLanguageInput?]? {
+    get {
+      return graphQLMap["languages"] as! [CodeLanguageInput?]?
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: "languages")
+    }
+  }
+
   public var owner: String? {
     get {
       return graphQLMap["owner"] as! String?
     }
     set {
       graphQLMap.updateValue(newValue, forKey: "owner")
+    }
+  }
+}
+
+public struct CodeLanguageInput: GraphQLMapConvertible {
+  public var graphQLMap: GraphQLMap
+
+  public init(id: String, type: String) {
+    graphQLMap = ["id": id, "type": type]
+  }
+
+  public var id: String {
+    get {
+      return graphQLMap["id"] as! String
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: "id")
+    }
+  }
+
+  public var type: String {
+    get {
+      return graphQLMap["type"] as! String
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: "type")
     }
   }
 }
@@ -363,8 +398,8 @@ public struct ModelSizeInput: GraphQLMapConvertible {
 public struct UpdateUserInput: GraphQLMapConvertible {
   public var graphQLMap: GraphQLMap
 
-  public init(id: GraphQLID, name: String? = nil, surname: String? = nil, owner: String? = nil) {
-    graphQLMap = ["id": id, "name": name, "surname": surname, "owner": owner]
+  public init(id: GraphQLID, name: String? = nil, surname: String? = nil, languages: [CodeLanguageInput?]? = nil, owner: String? = nil) {
+    graphQLMap = ["id": id, "name": name, "surname": surname, "languages": languages, "owner": owner]
   }
 
   public var id: GraphQLID {
@@ -394,6 +429,15 @@ public struct UpdateUserInput: GraphQLMapConvertible {
     }
   }
 
+  public var languages: [CodeLanguageInput?]? {
+    get {
+      return graphQLMap["languages"] as! [CodeLanguageInput?]?
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: "languages")
+    }
+  }
+
   public var owner: String? {
     get {
       return graphQLMap["owner"] as! String?
@@ -405,119 +449,6 @@ public struct UpdateUserInput: GraphQLMapConvertible {
 }
 
 public struct DeleteUserInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
-
-  public init(id: GraphQLID? = nil) {
-    graphQLMap = ["id": id]
-  }
-
-  public var id: GraphQLID? {
-    get {
-      return graphQLMap["id"] as! GraphQLID?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "id")
-    }
-  }
-}
-
-public struct CreateCodeLanguageInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
-
-  public init(id: GraphQLID? = nil, type: String) {
-    graphQLMap = ["id": id, "type": type]
-  }
-
-  public var id: GraphQLID? {
-    get {
-      return graphQLMap["id"] as! GraphQLID?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "id")
-    }
-  }
-
-  public var type: String {
-    get {
-      return graphQLMap["type"] as! String
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "type")
-    }
-  }
-}
-
-public struct ModelCodeLanguageConditionInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
-
-  public init(type: ModelStringInput? = nil, and: [ModelCodeLanguageConditionInput?]? = nil, or: [ModelCodeLanguageConditionInput?]? = nil, not: ModelCodeLanguageConditionInput? = nil) {
-    graphQLMap = ["type": type, "and": and, "or": or, "not": not]
-  }
-
-  public var type: ModelStringInput? {
-    get {
-      return graphQLMap["type"] as! ModelStringInput?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "type")
-    }
-  }
-
-  public var and: [ModelCodeLanguageConditionInput?]? {
-    get {
-      return graphQLMap["and"] as! [ModelCodeLanguageConditionInput?]?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "and")
-    }
-  }
-
-  public var or: [ModelCodeLanguageConditionInput?]? {
-    get {
-      return graphQLMap["or"] as! [ModelCodeLanguageConditionInput?]?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "or")
-    }
-  }
-
-  public var not: ModelCodeLanguageConditionInput? {
-    get {
-      return graphQLMap["not"] as! ModelCodeLanguageConditionInput?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "not")
-    }
-  }
-}
-
-public struct UpdateCodeLanguageInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
-
-  public init(id: GraphQLID, type: String? = nil) {
-    graphQLMap = ["id": id, "type": type]
-  }
-
-  public var id: GraphQLID {
-    get {
-      return graphQLMap["id"] as! GraphQLID
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "id")
-    }
-  }
-
-  public var type: String? {
-    get {
-      return graphQLMap["type"] as! String?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "type")
-    }
-  }
-}
-
-public struct DeleteCodeLanguageInput: GraphQLMapConvertible {
   public var graphQLMap: GraphQLMap
 
   public init(id: GraphQLID? = nil) {
@@ -730,62 +661,9 @@ public struct ModelIDInput: GraphQLMapConvertible {
   }
 }
 
-public struct ModelCodeLanguageFilterInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
-
-  public init(id: ModelIDInput? = nil, type: ModelStringInput? = nil, and: [ModelCodeLanguageFilterInput?]? = nil, or: [ModelCodeLanguageFilterInput?]? = nil, not: ModelCodeLanguageFilterInput? = nil) {
-    graphQLMap = ["id": id, "type": type, "and": and, "or": or, "not": not]
-  }
-
-  public var id: ModelIDInput? {
-    get {
-      return graphQLMap["id"] as! ModelIDInput?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "id")
-    }
-  }
-
-  public var type: ModelStringInput? {
-    get {
-      return graphQLMap["type"] as! ModelStringInput?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "type")
-    }
-  }
-
-  public var and: [ModelCodeLanguageFilterInput?]? {
-    get {
-      return graphQLMap["and"] as! [ModelCodeLanguageFilterInput?]?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "and")
-    }
-  }
-
-  public var or: [ModelCodeLanguageFilterInput?]? {
-    get {
-      return graphQLMap["or"] as! [ModelCodeLanguageFilterInput?]?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "or")
-    }
-  }
-
-  public var not: ModelCodeLanguageFilterInput? {
-    get {
-      return graphQLMap["not"] as! ModelCodeLanguageFilterInput?
-    }
-    set {
-      graphQLMap.updateValue(newValue, forKey: "not")
-    }
-  }
-}
-
 public final class CreateUserMutation: GraphQLMutation {
   public static let operationString =
-    "mutation CreateUser($input: CreateUserInput!, $condition: ModelUserConditionInput) {\n  createUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "mutation CreateUser($input: CreateUserInput!, $condition: ModelUserConditionInput) {\n  createUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var input: CreateUserInput
   public var condition: ModelUserConditionInput?
@@ -906,9 +784,8 @@ public final class CreateUserMutation: GraphQLMutation {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -917,8 +794,8 @@ public final class CreateUserMutation: GraphQLMutation {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -930,9 +807,9 @@ public final class CreateUserMutation: GraphQLMutation {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -947,15 +824,6 @@ public final class CreateUserMutation: GraphQLMutation {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
       }
     }
   }
@@ -963,7 +831,7 @@ public final class CreateUserMutation: GraphQLMutation {
 
 public final class UpdateUserMutation: GraphQLMutation {
   public static let operationString =
-    "mutation UpdateUser($input: UpdateUserInput!, $condition: ModelUserConditionInput) {\n  updateUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "mutation UpdateUser($input: UpdateUserInput!, $condition: ModelUserConditionInput) {\n  updateUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var input: UpdateUserInput
   public var condition: ModelUserConditionInput?
@@ -1084,9 +952,8 @@ public final class UpdateUserMutation: GraphQLMutation {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -1095,8 +962,8 @@ public final class UpdateUserMutation: GraphQLMutation {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -1108,9 +975,9 @@ public final class UpdateUserMutation: GraphQLMutation {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -1125,15 +992,6 @@ public final class UpdateUserMutation: GraphQLMutation {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
       }
     }
   }
@@ -1141,7 +999,7 @@ public final class UpdateUserMutation: GraphQLMutation {
 
 public final class DeleteUserMutation: GraphQLMutation {
   public static let operationString =
-    "mutation DeleteUser($input: DeleteUserInput!, $condition: ModelUserConditionInput) {\n  deleteUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "mutation DeleteUser($input: DeleteUserInput!, $condition: ModelUserConditionInput) {\n  deleteUser(input: $input, condition: $condition) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var input: DeleteUserInput
   public var condition: ModelUserConditionInput?
@@ -1262,9 +1120,8 @@ public final class DeleteUserMutation: GraphQLMutation {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -1273,8 +1130,8 @@ public final class DeleteUserMutation: GraphQLMutation {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -1286,9 +1143,9 @@ public final class DeleteUserMutation: GraphQLMutation {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -1303,318 +1160,6 @@ public final class DeleteUserMutation: GraphQLMutation {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
-      }
-    }
-  }
-}
-
-public final class CreateCodeLanguageMutation: GraphQLMutation {
-  public static let operationString =
-    "mutation CreateCodeLanguage($input: CreateCodeLanguageInput!, $condition: ModelCodeLanguageConditionInput) {\n  createCodeLanguage(input: $input, condition: $condition) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var input: CreateCodeLanguageInput
-  public var condition: ModelCodeLanguageConditionInput?
-
-  public init(input: CreateCodeLanguageInput, condition: ModelCodeLanguageConditionInput? = nil) {
-    self.input = input
-    self.condition = condition
-  }
-
-  public var variables: GraphQLMap? {
-    return ["input": input, "condition": condition]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Mutation"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("createCodeLanguage", arguments: ["input": GraphQLVariable("input"), "condition": GraphQLVariable("condition")], type: .object(CreateCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(createCodeLanguage: CreateCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Mutation", "createCodeLanguage": createCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var createCodeLanguage: CreateCodeLanguage? {
-      get {
-        return (snapshot["createCodeLanguage"] as? Snapshot).flatMap { CreateCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "createCodeLanguage")
-      }
-    }
-
-    public struct CreateCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
-      }
-    }
-  }
-}
-
-public final class UpdateCodeLanguageMutation: GraphQLMutation {
-  public static let operationString =
-    "mutation UpdateCodeLanguage($input: UpdateCodeLanguageInput!, $condition: ModelCodeLanguageConditionInput) {\n  updateCodeLanguage(input: $input, condition: $condition) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var input: UpdateCodeLanguageInput
-  public var condition: ModelCodeLanguageConditionInput?
-
-  public init(input: UpdateCodeLanguageInput, condition: ModelCodeLanguageConditionInput? = nil) {
-    self.input = input
-    self.condition = condition
-  }
-
-  public var variables: GraphQLMap? {
-    return ["input": input, "condition": condition]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Mutation"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("updateCodeLanguage", arguments: ["input": GraphQLVariable("input"), "condition": GraphQLVariable("condition")], type: .object(UpdateCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(updateCodeLanguage: UpdateCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Mutation", "updateCodeLanguage": updateCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var updateCodeLanguage: UpdateCodeLanguage? {
-      get {
-        return (snapshot["updateCodeLanguage"] as? Snapshot).flatMap { UpdateCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "updateCodeLanguage")
-      }
-    }
-
-    public struct UpdateCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
-      }
-    }
-  }
-}
-
-public final class DeleteCodeLanguageMutation: GraphQLMutation {
-  public static let operationString =
-    "mutation DeleteCodeLanguage($input: DeleteCodeLanguageInput!, $condition: ModelCodeLanguageConditionInput) {\n  deleteCodeLanguage(input: $input, condition: $condition) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var input: DeleteCodeLanguageInput
-  public var condition: ModelCodeLanguageConditionInput?
-
-  public init(input: DeleteCodeLanguageInput, condition: ModelCodeLanguageConditionInput? = nil) {
-    self.input = input
-    self.condition = condition
-  }
-
-  public var variables: GraphQLMap? {
-    return ["input": input, "condition": condition]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Mutation"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("deleteCodeLanguage", arguments: ["input": GraphQLVariable("input"), "condition": GraphQLVariable("condition")], type: .object(DeleteCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(deleteCodeLanguage: DeleteCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Mutation", "deleteCodeLanguage": deleteCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var deleteCodeLanguage: DeleteCodeLanguage? {
-      get {
-        return (snapshot["deleteCodeLanguage"] as? Snapshot).flatMap { DeleteCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "deleteCodeLanguage")
-      }
-    }
-
-    public struct DeleteCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
       }
     }
   }
@@ -1622,7 +1167,7 @@ public final class DeleteCodeLanguageMutation: GraphQLMutation {
 
 public final class GetUserQuery: GraphQLQuery {
   public static let operationString =
-    "query GetUser($id: ID!) {\n  getUser(id: $id) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "query GetUser($id: ID!) {\n  getUser(id: $id) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var id: GraphQLID
 
@@ -1741,9 +1286,8 @@ public final class GetUserQuery: GraphQLQuery {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -1752,8 +1296,8 @@ public final class GetUserQuery: GraphQLQuery {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -1765,9 +1309,9 @@ public final class GetUserQuery: GraphQLQuery {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -1782,15 +1326,6 @@ public final class GetUserQuery: GraphQLQuery {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
       }
     }
   }
@@ -1798,7 +1333,7 @@ public final class GetUserQuery: GraphQLQuery {
 
 public final class ListUsersQuery: GraphQLQuery {
   public static let operationString =
-    "query ListUsers($filter: ModelUserFilterInput, $limit: Int, $nextToken: String) {\n  listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {\n    __typename\n    items {\n      __typename\n      id\n      name\n      surname\n      languages {\n        __typename\n        id\n        type\n        owner\n      }\n      owner\n    }\n    nextToken\n  }\n}"
+    "query ListUsers($filter: ModelUserFilterInput, $limit: Int, $nextToken: String) {\n  listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {\n    __typename\n    items {\n      __typename\n      id\n      name\n      surname\n      languages {\n        __typename\n        id\n        type\n      }\n      owner\n    }\n    nextToken\n  }\n}"
 
   public var filter: ModelUserFilterInput?
   public var limit: Int?
@@ -1967,9 +1502,8 @@ public final class ListUsersQuery: GraphQLQuery {
 
           public static let selections: [GraphQLSelection] = [
             GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-            GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+            GraphQLField("id", type: .nonNull(.scalar(String.self))),
             GraphQLField("type", type: .nonNull(.scalar(String.self))),
-            GraphQLField("owner", type: .scalar(String.self)),
           ]
 
           public var snapshot: Snapshot
@@ -1978,8 +1512,8 @@ public final class ListUsersQuery: GraphQLQuery {
             self.snapshot = snapshot
           }
 
-          public init(id: GraphQLID, type: String, owner: String? = nil) {
-            self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+          public init(id: String, type: String) {
+            self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
           }
 
           public var __typename: String {
@@ -1991,9 +1525,9 @@ public final class ListUsersQuery: GraphQLQuery {
             }
           }
 
-          public var id: GraphQLID {
+          public var id: String {
             get {
-              return snapshot["id"]! as! GraphQLID
+              return snapshot["id"]! as! String
             }
             set {
               snapshot.updateValue(newValue, forKey: "id")
@@ -2008,264 +1542,6 @@ public final class ListUsersQuery: GraphQLQuery {
               snapshot.updateValue(newValue, forKey: "type")
             }
           }
-
-          public var owner: String? {
-            get {
-              return snapshot["owner"] as? String
-            }
-            set {
-              snapshot.updateValue(newValue, forKey: "owner")
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-public final class GetCodeLanguageQuery: GraphQLQuery {
-  public static let operationString =
-    "query GetCodeLanguage($id: ID!) {\n  getCodeLanguage(id: $id) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var id: GraphQLID
-
-  public init(id: GraphQLID) {
-    self.id = id
-  }
-
-  public var variables: GraphQLMap? {
-    return ["id": id]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Query"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("getCodeLanguage", arguments: ["id": GraphQLVariable("id")], type: .object(GetCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(getCodeLanguage: GetCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Query", "getCodeLanguage": getCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var getCodeLanguage: GetCodeLanguage? {
-      get {
-        return (snapshot["getCodeLanguage"] as? Snapshot).flatMap { GetCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "getCodeLanguage")
-      }
-    }
-
-    public struct GetCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
-      }
-    }
-  }
-}
-
-public final class ListCodeLanguagesQuery: GraphQLQuery {
-  public static let operationString =
-    "query ListCodeLanguages($filter: ModelCodeLanguageFilterInput, $limit: Int, $nextToken: String) {\n  listCodeLanguages(filter: $filter, limit: $limit, nextToken: $nextToken) {\n    __typename\n    items {\n      __typename\n      id\n      type\n      owner\n    }\n    nextToken\n  }\n}"
-
-  public var filter: ModelCodeLanguageFilterInput?
-  public var limit: Int?
-  public var nextToken: String?
-
-  public init(filter: ModelCodeLanguageFilterInput? = nil, limit: Int? = nil, nextToken: String? = nil) {
-    self.filter = filter
-    self.limit = limit
-    self.nextToken = nextToken
-  }
-
-  public var variables: GraphQLMap? {
-    return ["filter": filter, "limit": limit, "nextToken": nextToken]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Query"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("listCodeLanguages", arguments: ["filter": GraphQLVariable("filter"), "limit": GraphQLVariable("limit"), "nextToken": GraphQLVariable("nextToken")], type: .object(ListCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(listCodeLanguages: ListCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Query", "listCodeLanguages": listCodeLanguages.flatMap { $0.snapshot }])
-    }
-
-    public var listCodeLanguages: ListCodeLanguage? {
-      get {
-        return (snapshot["listCodeLanguages"] as? Snapshot).flatMap { ListCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "listCodeLanguages")
-      }
-    }
-
-    public struct ListCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["ModelCodeLanguageConnection"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("items", type: .list(.object(Item.selections))),
-        GraphQLField("nextToken", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(items: [Item?]? = nil, nextToken: String? = nil) {
-        self.init(snapshot: ["__typename": "ModelCodeLanguageConnection", "items": items.flatMap { $0.map { $0.flatMap { $0.snapshot } } }, "nextToken": nextToken])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var items: [Item?]? {
-        get {
-          return (snapshot["items"] as? [Snapshot?]).flatMap { $0.map { $0.flatMap { Item(snapshot: $0) } } }
-        }
-        set {
-          snapshot.updateValue(newValue.flatMap { $0.map { $0.flatMap { $0.snapshot } } }, forKey: "items")
-        }
-      }
-
-      public var nextToken: String? {
-        get {
-          return snapshot["nextToken"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "nextToken")
-        }
-      }
-
-      public struct Item: GraphQLSelectionSet {
-        public static let possibleTypes = ["CodeLanguage"]
-
-        public static let selections: [GraphQLSelection] = [
-          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-          GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
-        ]
-
-        public var snapshot: Snapshot
-
-        public init(snapshot: Snapshot) {
-          self.snapshot = snapshot
-        }
-
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-        }
-
-        public var __typename: String {
-          get {
-            return snapshot["__typename"]! as! String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "__typename")
-          }
-        }
-
-        public var id: GraphQLID {
-          get {
-            return snapshot["id"]! as! GraphQLID
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "id")
-          }
-        }
-
-        public var type: String {
-          get {
-            return snapshot["type"]! as! String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "type")
-          }
-        }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
         }
       }
     }
@@ -2274,7 +1550,7 @@ public final class ListCodeLanguagesQuery: GraphQLQuery {
 
 public final class OnCreateUserSubscription: GraphQLSubscription {
   public static let operationString =
-    "subscription OnCreateUser($owner: String!) {\n  onCreateUser(owner: $owner) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "subscription OnCreateUser($owner: String!) {\n  onCreateUser(owner: $owner) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var owner: String
 
@@ -2393,9 +1669,8 @@ public final class OnCreateUserSubscription: GraphQLSubscription {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -2404,8 +1679,8 @@ public final class OnCreateUserSubscription: GraphQLSubscription {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -2417,9 +1692,9 @@ public final class OnCreateUserSubscription: GraphQLSubscription {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -2434,15 +1709,6 @@ public final class OnCreateUserSubscription: GraphQLSubscription {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
       }
     }
   }
@@ -2450,7 +1716,7 @@ public final class OnCreateUserSubscription: GraphQLSubscription {
 
 public final class OnUpdateUserSubscription: GraphQLSubscription {
   public static let operationString =
-    "subscription OnUpdateUser($owner: String!) {\n  onUpdateUser(owner: $owner) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "subscription OnUpdateUser($owner: String!) {\n  onUpdateUser(owner: $owner) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
   public var owner: String
 
@@ -2569,9 +1835,8 @@ public final class OnUpdateUserSubscription: GraphQLSubscription {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -2580,8 +1845,8 @@ public final class OnUpdateUserSubscription: GraphQLSubscription {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -2593,9 +1858,9 @@ public final class OnUpdateUserSubscription: GraphQLSubscription {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -2610,15 +1875,6 @@ public final class OnUpdateUserSubscription: GraphQLSubscription {
             snapshot.updateValue(newValue, forKey: "type")
           }
         }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
       }
     }
   }
@@ -2626,23 +1882,16 @@ public final class OnUpdateUserSubscription: GraphQLSubscription {
 
 public final class OnDeleteUserSubscription: GraphQLSubscription {
   public static let operationString =
-    "subscription OnDeleteUser($owner: String!) {\n  onDeleteUser(owner: $owner) {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n      owner\n    }\n    owner\n  }\n}"
+    "subscription OnDeleteUser {\n  onDeleteUser {\n    __typename\n    id\n    name\n    surname\n    languages {\n      __typename\n      id\n      type\n    }\n    owner\n  }\n}"
 
-  public var owner: String
-
-  public init(owner: String) {
-    self.owner = owner
-  }
-
-  public var variables: GraphQLMap? {
-    return ["owner": owner]
+  public init() {
   }
 
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes = ["Subscription"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField("onDeleteUser", arguments: ["owner": GraphQLVariable("owner")], type: .object(OnDeleteUser.selections)),
+      GraphQLField("onDeleteUser", type: .object(OnDeleteUser.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -2745,9 +1994,8 @@ public final class OnDeleteUserSubscription: GraphQLSubscription {
 
         public static let selections: [GraphQLSelection] = [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("id", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(String.self))),
-          GraphQLField("owner", type: .scalar(String.self)),
         ]
 
         public var snapshot: Snapshot
@@ -2756,8 +2004,8 @@ public final class OnDeleteUserSubscription: GraphQLSubscription {
           self.snapshot = snapshot
         }
 
-        public init(id: GraphQLID, type: String, owner: String? = nil) {
-          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
+        public init(id: String, type: String) {
+          self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type])
         }
 
         public var __typename: String {
@@ -2769,9 +2017,9 @@ public final class OnDeleteUserSubscription: GraphQLSubscription {
           }
         }
 
-        public var id: GraphQLID {
+        public var id: String {
           get {
-            return snapshot["id"]! as! GraphQLID
+            return snapshot["id"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: "id")
@@ -2785,312 +2033,6 @@ public final class OnDeleteUserSubscription: GraphQLSubscription {
           set {
             snapshot.updateValue(newValue, forKey: "type")
           }
-        }
-
-        public var owner: String? {
-          get {
-            return snapshot["owner"] as? String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: "owner")
-          }
-        }
-      }
-    }
-  }
-}
-
-public final class OnCreateCodeLanguageSubscription: GraphQLSubscription {
-  public static let operationString =
-    "subscription OnCreateCodeLanguage($owner: String!) {\n  onCreateCodeLanguage(owner: $owner) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var owner: String
-
-  public init(owner: String) {
-    self.owner = owner
-  }
-
-  public var variables: GraphQLMap? {
-    return ["owner": owner]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Subscription"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("onCreateCodeLanguage", arguments: ["owner": GraphQLVariable("owner")], type: .object(OnCreateCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(onCreateCodeLanguage: OnCreateCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Subscription", "onCreateCodeLanguage": onCreateCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var onCreateCodeLanguage: OnCreateCodeLanguage? {
-      get {
-        return (snapshot["onCreateCodeLanguage"] as? Snapshot).flatMap { OnCreateCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "onCreateCodeLanguage")
-      }
-    }
-
-    public struct OnCreateCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
-      }
-    }
-  }
-}
-
-public final class OnUpdateCodeLanguageSubscription: GraphQLSubscription {
-  public static let operationString =
-    "subscription OnUpdateCodeLanguage($owner: String!) {\n  onUpdateCodeLanguage(owner: $owner) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var owner: String
-
-  public init(owner: String) {
-    self.owner = owner
-  }
-
-  public var variables: GraphQLMap? {
-    return ["owner": owner]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Subscription"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("onUpdateCodeLanguage", arguments: ["owner": GraphQLVariable("owner")], type: .object(OnUpdateCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(onUpdateCodeLanguage: OnUpdateCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Subscription", "onUpdateCodeLanguage": onUpdateCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var onUpdateCodeLanguage: OnUpdateCodeLanguage? {
-      get {
-        return (snapshot["onUpdateCodeLanguage"] as? Snapshot).flatMap { OnUpdateCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "onUpdateCodeLanguage")
-      }
-    }
-
-    public struct OnUpdateCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
-        }
-      }
-    }
-  }
-}
-
-public final class OnDeleteCodeLanguageSubscription: GraphQLSubscription {
-  public static let operationString =
-    "subscription OnDeleteCodeLanguage($owner: String!) {\n  onDeleteCodeLanguage(owner: $owner) {\n    __typename\n    id\n    type\n    owner\n  }\n}"
-
-  public var owner: String
-
-  public init(owner: String) {
-    self.owner = owner
-  }
-
-  public var variables: GraphQLMap? {
-    return ["owner": owner]
-  }
-
-  public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = ["Subscription"]
-
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField("onDeleteCodeLanguage", arguments: ["owner": GraphQLVariable("owner")], type: .object(OnDeleteCodeLanguage.selections)),
-    ]
-
-    public var snapshot: Snapshot
-
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
-    }
-
-    public init(onDeleteCodeLanguage: OnDeleteCodeLanguage? = nil) {
-      self.init(snapshot: ["__typename": "Subscription", "onDeleteCodeLanguage": onDeleteCodeLanguage.flatMap { $0.snapshot }])
-    }
-
-    public var onDeleteCodeLanguage: OnDeleteCodeLanguage? {
-      get {
-        return (snapshot["onDeleteCodeLanguage"] as? Snapshot).flatMap { OnDeleteCodeLanguage(snapshot: $0) }
-      }
-      set {
-        snapshot.updateValue(newValue?.snapshot, forKey: "onDeleteCodeLanguage")
-      }
-    }
-
-    public struct OnDeleteCodeLanguage: GraphQLSelectionSet {
-      public static let possibleTypes = ["CodeLanguage"]
-
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
-        GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
-        GraphQLField("type", type: .nonNull(.scalar(String.self))),
-        GraphQLField("owner", type: .scalar(String.self)),
-      ]
-
-      public var snapshot: Snapshot
-
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
-      }
-
-      public init(id: GraphQLID, type: String, owner: String? = nil) {
-        self.init(snapshot: ["__typename": "CodeLanguage", "id": id, "type": type, "owner": owner])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot["__typename"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "__typename")
-        }
-      }
-
-      public var id: GraphQLID {
-        get {
-          return snapshot["id"]! as! GraphQLID
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "id")
-        }
-      }
-
-      public var type: String {
-        get {
-          return snapshot["type"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "type")
-        }
-      }
-
-      public var owner: String? {
-        get {
-          return snapshot["owner"] as? String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: "owner")
         }
       }
     }

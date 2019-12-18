@@ -2,7 +2,7 @@ type User
   @model 
   @auth(
     rules: [
-      {allow: owner, ownerField: "owner", operations: [create, update, delete, read]},
+      {allow: owner, ownerField: "owner", operations: [create, update, read]},
     ]){
   id: ID!
   name: String
@@ -12,12 +12,7 @@ type User
   
 }
 
-type CodeLanguage 
-   @model 
-   @auth( 
-    rules: [
-      {allow: owner, operations: [create, update, delete, read]},
-    ]){
-  id: ID!
+type CodeLanguage {
+  id: String!
   type: String!
 }

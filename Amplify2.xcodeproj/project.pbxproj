@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3F2FFCC70FC714E77A772B27 /* Pods_Amplify2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62923BEE1C5787FBE08A127B /* Pods_Amplify2.framework */; };
 		934F632023A2539D00006A6B /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934F631F23A2539D00006A6B /* Language.swift */; };
+		9355540723AA72B500908B8E /* UserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9355540623AA72B500908B8E /* UserInfoViewController.swift */; };
 		93B38CA02396B9EE006808BC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B38C9F2396B9EE006808BC /* AppDelegate.swift */; };
 		93B38CA22396B9EE006808BC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B38CA12396B9EE006808BC /* SceneDelegate.swift */; };
 		93B38CA42396B9EE006808BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B38CA32396B9EE006808BC /* ViewController.swift */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		62923BEE1C5787FBE08A127B /* Pods_Amplify2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Amplify2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		934F631F23A2539D00006A6B /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		9355540623AA72B500908B8E /* UserInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewController.swift; sourceTree = "<group>"; };
 		93B38C9C2396B9EE006808BC /* Amplify2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Amplify2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B38C9F2396B9EE006808BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		93B38CA12396B9EE006808BC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				93B38CB72396C29D006808BC /* NameTableViewCell.swift */,
 				93B38CBB2396D07F006808BC /* Person.swift */,
 				934F631F23A2539D00006A6B /* Language.swift */,
+				9355540623AA72B500908B8E /* UserInfoViewController.swift */,
 			);
 			path = Amplify2;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93B38CBC2396D07F006808BC /* Person.swift in Sources */,
+				9355540723AA72B500908B8E /* UserInfoViewController.swift in Sources */,
 				93B38CA42396B9EE006808BC /* ViewController.swift in Sources */,
 				93B38CA02396B9EE006808BC /* AppDelegate.swift in Sources */,
 				934F632023A2539D00006A6B /* Language.swift in Sources */,

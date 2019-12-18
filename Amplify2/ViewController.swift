@@ -17,6 +17,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var appSyncClient: AWSAppSyncClient?
     var discard : Cancellable?
     var personList: [Person]?
+    //TODO SPara Languagelist[0] som en person
     var languagesList : [Language]?
     var userInfoExists : Bool = false
     @IBOutlet weak var nameLbl: UITextField!
@@ -31,6 +32,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var userSurnameLbl: UILabel!
     @IBOutlet weak var userNameTxtField: UITextField!
     @IBOutlet weak var userSurnameTxtField: UITextField!
+    
+    
+    let segueToUserInfo = "segueToUserInfo"
     
     
     override func viewDidLoad() {
@@ -52,6 +56,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if AWSMobileClient.default().isSignedIn {
+            DispatchQueue.main.async {
+                    print("Signed in fetching info")
+
+                    self.checkUser()
+                    //self.runQuery()
+            }
+        }
+    
+    }
+    
     func signInState(){
         
 
@@ -68,11 +85,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         DispatchQueue.main.async {
                             print("Signed in already in queue")
 
-                            self.checkUser()
-                            self.runQuery()
+                            //self.checkUser()
+                            //self.runQuery()
                     }
                 case .signedOut:
-                    
+                    //TODO clear cache
                     AWSMobileClient.default().showSignIn(navigationController: self.navigationController!,
                         signInUIOptions: SignInUIOptions(canCancel: false, logoImage: #imageLiteral(resourceName: "Logo")),{ (userState, error) in
                         if let signInState = userState {
@@ -83,7 +100,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             DispatchQueue.main.async {
 
                                 self.checkUser()
-                                self.runQuery()
+                               // self.runQuery()
                             }
                             }else if let error = error {
                                 print("error logging in: \(error.localizedDescription)")
@@ -106,15 +123,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     @IBAction func userPressed(_ sender: Any) {
         
-        let name = userNameTxtField.text ?? "newname"
-        let surname =  userSurnameTxtField.text ?? "newsurname"
         
-        if personList!.count > 0 {
-            let id =  personList![0].id
-            updateUser(id: id!, name: name, surname: surname)
-        } else{
-            createUserInfo(name: name, surname: surname)
-        }
+        print("AuthUserNamePressed, nothing is suppsoed to happen atm")
+//        let name = userNameTxtField.text ?? "newname"
+//        let surname =  userSurnameTxtField.text ?? "newsurname"
+//
+//        if personList!.count > 0 {
+//            let id =  personList![0].id
+//            updateUser(id: id!, name: name, surname: surname)
+//        } else{
+//            createUserInfo(name: name, surname: surname)
+//        }
         
         
     }
@@ -123,7 +142,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         var mutationInput = UpdateUserInput(id: id)
         mutationInput.name = name
-        
         mutationInput.surname = surname
         
         appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)){ (result, error) in
@@ -142,17 +160,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     self.checkUser()
                 }
             }
-            
-            
         }
-        
-        
-        
     }
     
     func createUserInfo(name: String, surname: String) {
         
-        let mutationInput = CreateUserInput(name: name, surname: surname)
+       // let mutationInput = CreateUserInput(name: name, surname: surname)
+        let mutationInput = CreateUserInput(name: name, surname: surname, languages: []) // codeList: []
+        //mmutationInput.codeList?.append(CodeLanguagesInput( id: <#GraphQLID#>, type: "Java"))
         
         appSyncClient?.perform(mutation: CreateUserMutation(input: mutationInput)){ (result, error) in
            // self.runQuery()
@@ -165,6 +180,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             print("Mutation Creating User complete.")
             
+            print("NEW ID = " + (result?.data?.createUser!.id)!)
             self.userNameTxtField.text = ""
             self.userSurnameTxtField.text = ""
             
@@ -187,20 +203,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 print(error?.localizedDescription ?? "error fetching")
                 return
             }
-            
+            print()
             print("Fetching Userinfo")
             self.personList = []
             
             result?.data?.listUsers?.items?.forEach {
             print(($0?.name)! + " " + ($0?.surname)!)
-                let pers = Person(id: ($0?.id)!, name: ($0?.name)!, surname:(($0?.surname)!) )
-            self.personList?.append(pers)
+                var langList: [Language] = []
+                $0?.languages?.forEach{
+                    let lang = Language(type: $0!.type, id: $0!.id)
+                    langList.append(lang)
+                   // print(lang.id! + " and " + lang.type!)
+                }
+
+                
+                //print("all lang: !")
+                //print($0?.languages as Any)  //works
+                
+                let pers = Person(id: ($0?.id)!, name: ($0?.name)!, surname:($0?.surname)!, languages: langList )
+               // print(pers.self)
+                //print(langList.self)
+                self.personList?.append(pers)
+
             }
             
+            self.languagesList = []
+
+            
+            self.nameTableView.reloadData()
+            
             if(self.personList!.count > 0){
-                
                 self.usernameLbl.text = self.personList![0].name
                 self.userSurnameLbl.text = self.personList![0].surname
+                
+                for lan in self.personList![0].languages! {
+                    print(lan.id + " " + lan.type!)
+                    self.languagesList?.append(lan)
+                }
                 
             } else if (self.personList!.count < 1){
                 self.usernameLbl.text = "name"
@@ -266,7 +305,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             return
         }else {
             let idTxt = idTxtView.text
-            runSpecificQuery(id: idTxt!)
+           // runSpecificQuery(id: idTxt!)
         }
         
         //871f2c0b-e9dc-440d-8a71-593452abaa34
@@ -276,8 +315,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         print("TRYING TO SAVE")
         let nameTxt = nameLbl.text ?? "testname"
-        
-        runMutation(codeName: nameTxt)
+        let perID = personList![0].id!
+        if perID != nil{
+            addCodeLanguageMutation(id: perID, codeName:  nameTxt)
+        }
         
         nameLbl.text = ""
         
@@ -289,7 +330,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             return
         }else {
             let idTxt = idTxtView.text
-            runDeleteSpecific(id: idTxt!)
+          //  runDeleteSpecific(id: idTxt!)
         }
     }
     
@@ -300,40 +341,134 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             return
         }else {
             let idTxt = idTxtView.text
-            runUpdateSpecific(id: idTxt!)
+           // runUpdateSpecific(id: idTxt!)
         }
         
         
     }
     @IBAction func printNames(_ sender: Any) {
-        runQuery()
+        fetchLanguagesFromUser()
+       // runQuery()
     }
     
-    func runMutation(codeName: String) {
+    func addCodeLanguageMutation(id: GraphQLID ,codeName: String) {
         
-        let mutationInput = CreateCodeLanguageInput(type: codeName)
+        var mutationInput = UpdateUserInput(id: id)
         
-        appSyncClient?.perform(mutation: CreateCodeLanguageMutation(input: mutationInput)){ (result, error) in
-           // self.runQuery()
-            if let error = error as? AWSAppSyncClientError {
-                print("Error mutating: \(error.localizedDescription)")
+        var index = 0
+        var oldLanguages: [CodeLanguageInput] = []
+
+        if (languagesList!.count > 0 ){
+
+            for language in languagesList! {
+                let cl = CodeLanguageInput(id: language.id, type: language.type!)
+                oldLanguages.append(cl)
+                let x =  language.id // item.value(forKey: "index") as! String
+                if  Int(x!)! > index {
+                    index = Int(x!)!
+                }
             }
-            if let resultError = result?.errors{
-                print("Error saving the item to server trhough mutation: \(resultError)")
-                return
-            }
-            print("Mutation complete.")
+        }
+
+        index += 1
+        
+        let newLanguage = CodeLanguageInput(id: String(index), type: codeName)
+        oldLanguages.append(newLanguage)
+        
             
-            // because the mutation will not complete before the query is sent(asynchronus), do callback
-           // self.runQuery()
+        mutationInput.languages = oldLanguages
+        
+        appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)){
+            (result, error) in
+                       // self.runQuery()
+                        if let error = error as? AWSAppSyncClientError {
+                            print("Error mutating: \(error.localizedDescription)")
+                        }
+                        if let resultError = result?.errors{
+                            print("Error saving the item to server trhough mutation: \(resultError)")
+                            return
+                        }
+                        print("Mutation complete.")
+            
+                        // because the mutation will not complete before the query is sent(asynchronus), do callback
+                       // self.runQuery()
             
         }
+        
+        //[CodeLanguageInput(id: "1", type: codeName), CodeLanguageInput(id: "2", type: codeName + "2")] //[Language(type: "1", id: codeName)] //personList![0].languages?.append(<#T##newElement: Language##Language#>)
+        
+                
+        //        var oldLanguages = [languagesList?.forEach{
+        //            CodeLanguageInput(id: $0.id , type: $0.type!)
+        //        }]
+                
+               // mutationInput.languages = oldLanguages.append(newLanguage)
+        
+                
+                //appSyncClient?.perform(mutation: UpdateUserInput.)
+                
+        //        let mutationInput = CreateCodeLanguage(type: codeName)
+        //
+        //        var mI = UpdateUserInput(id: id)
+        //
+        //
+        //
+        //        let muI =  UserCodeLanguageInput(codeList: [CodeLanguageInput(type: codeName)])
+        //
+        //
+        //       // let muIn = UpdateUserInput(id: id,  codeList: UserCodeLanguageInput(codeList: [CodeLanguageInput(type: codeName)]))
+
+        //        mI.codeList?.append(CodeLanguageInput(type: codeName))
+                
+                //mI.codeList?.append(CodeLanguageInput(type: codeName))
+                
+                //appSyncClient?.perform(mutation:UpdateUserMutation)
+         
+                //id: id, codeList: muI
+                
+                //let mutationInput = CreateCodeLanguageInput(type: codeName)
+        
+        // let mutationInput = //CodeLanguageInput(type: codeName)
+        
+        // let mutaionInput = CodeLanguageInput(type: codeName)
+       // var mutationInput = UpdateUserInpt(id: id)
+        
+
+//        appSyncClient?.perform(mutation: NewCodeLanguageMutation(type: codeName)){
+//
+//        }
+        
+        
+        
+        //mutationInput.codeList?.append(CodeLanguageInput(id: "3", type: codeName))
+        //mutationInput.codeList?.append(CodeLanguageInput(id: "3", type: codeName))
+            //[(CodeLanguageInput( id: "1", type: codeName)), (CodeLanguageInput( id: "2", type: codeName + "2")) ]
+        //[(CodeLanguagesInput( id: "3", type: codeName)), (CodeLanguagesInput( id: "4", type: codeName + "2")) ]
+        //.append(CodeLanguagesInput( id: "5", type: codeName))
+//
+//        let mutationInput = CreateCodeLanguagesInput(type: codeName)
+        //CreateCodeLanguagesMutation
+//        appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)){ (result, error) in
+//           // self.runQuery()
+//            if let error = error as? AWSAppSyncClientError {
+//                print("Error mutating: \(error.localizedDescription)")
+//            }
+//            if let resultError = result?.errors{
+//                print("Error saving the item to server trhough mutation: \(resultError)")
+//                return
+//            }
+//            print("Mutation complete.")
+//
+//            // because the mutation will not complete before the query is sent(asynchronus), do callback
+//           // self.runQuery()
+//
+//        }
     }
     
-    func runDeleteSpecific( id : String){
-        let mutationInput = DeleteCodeLanguageInput(id: id)
+  /*  func runDeleteSpecific( id : String){
+        let mutationInput = DeleteCodeLanguagesInput(id: id)
         
-        appSyncClient?.perform(mutation: DeleteCodeLanguageMutation(input: mutationInput)) {
+        appSyncClient?.perform(mutation: DeleteCodeLanguagesMutation(input: mutationInput)) {
             (result, error) in
             
             if let error = error as? AWSAppSyncClientError {
@@ -348,12 +483,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             
         }
-    }
-    func runUpdateSpecific(id: String){
-        var mutationInput = UpdateCodeLanguageInput(id: id) //UpdateCodeLanguageInput(id: id)
+    }*/
+    
+  /*  func runUpdateSpecific(id: String){
+        var mutationInput = UpdateCodeLanguagesInput(id: id) //UpdateCodeLanguageInput(id: id)
        // mutationInput.name = nameLbl.text ?? "forgot"
         mutationInput.type = nameLbl.text ?? "forgot"
-        appSyncClient?.perform(mutation: UpdateCodeLanguageMutation(input: mutationInput)) { (result, error) in
+        appSyncClient?.perform(mutation: UpdateCodeLanguagesMutation(input: mutationInput)) { (result, error) in
             
             if let error = error as? AWSAppSyncClientError {
                 print("Error occurred: \(error.localizedDescription )")
@@ -366,12 +502,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
         
-    }
-    
+    }*/
+  /*
      func runSpecificQuery( id: String){
          print("Entering specific query")
         //var pers = ""
-        appSyncClient?.fetch(query: GetCodeLanguageQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
+        appSyncClient?.fetch(query: GetCodeLanguagesQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
              
              if error != nil{
                  print(error?.localizedDescription ?? "error fetching")
@@ -383,7 +519,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //result?.data?.getTodo?.snapshot {
             if(result != nil){
                 
-                codeType = result?.data?.getCodeLanguage?.type ?? "not found"
+                codeType = result?.data?.getCodeLanguages?.type ?? "not found"
 //                    (((result?.data?.getUser!.name) ?? "ntfound") + " " + (result?.data?.getUser!.surname ?? "surname") )
                 // pers += (result?.data?.getTodo!.description)!
             
@@ -397,17 +533,51 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
            // [($0?.name)!] = ($0?.description)!
         //871f2c0b-e9dc-440d-8a71-593452abaa34
-    }
+    } */
     
+    
+    func fetchLanguagesFromUser(){
+        
+        print("ENTERING fetchLanguagesFromUser ")
+        
+        if personList!.count > 0 {
+ 
+            appSyncClient?.fetch(query:  GetUserQuery(id: personList![0].id), cachePolicy: .returnCacheDataAndFetch){ (result, error) in
+                
+                if error != nil{
+                    print(error?.localizedDescription ?? "error fetching")
+                    return
+                }
+                
+                print("Fetch Specific Users Query complete")
+                self.languagesList = []
+                
+                result?.data?.getUser?.languages!.forEach {
+                    let lang = Language(type: $0!.type, id: $0!.id)
+                    self.languagesList?.append(lang) //  languagesList.append(lang)
+                       // print(lang.id! + " and " + lang.type!)
+                    print("Updating Languagelist")
+                }
+
+                
+                self.personList![0].languages = self.languagesList
+                
+                print(self.languagesList?.count as Any)
+                self.nameTableView.reloadData()
+                print(" ")
+                
+            }
+        }
+    }
              
 
     
-    func runQuery() {
+ /*   func runQuery() {
         
         print("ENTERING runQuery")
     
         
-        appSyncClient?.fetch(query: ListCodeLanguagesQuery(), cachePolicy: .fetchIgnoringCacheData) { (result, error) in
+        appSyncClient?.fetch(query: ListCodeLanguagessQuery(), cachePolicy: .fetchIgnoringCacheData) { (result, error) in
             //fetchIgnoringCacheData, returnCacheDataAndFetch
             if error != nil{
                 print(error?.localizedDescription ?? "error fetching")
@@ -419,12 +589,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //            let no = result?.data?.listTodos?.items?.count
 //            let nostring = no
 //            print("listTodo count: \(String(describing: nostring))")
-            result?.data?.listCodeLanguages?.items?.forEach {
+            result?.data?.listCodeLanguagess?.items?.forEach {
                 print(($0?.type)!)
-                let codeType = Language(type: ($0?.type)! )
+                let codeType = Language(type: ($0?.type)!, id: ($0?.id)!)
                 self.languagesList?.append(codeType)
                // [($0?.name)!] = ($0?.description)!
             }
+            
             
             print(self.languagesList?.count as Any)
             self.nameTableView.reloadData()
@@ -432,17 +603,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             
         }
-    }
+    } */
     
     
     
     //realtime subscription to data
-    func subscribe() {
+ /*   func subscribe() {
         //TODO OWNER
         do {
-            discard = try appSyncClient?.subscribe(subscription: OnCreateCodeLanguageSubscription(owner: AWSMobileClient.default().identityId!), resultHandler: { (result, transaction, error) in
+            discard = try appSyncClient?.subscribe(subscription: OnCreateCodeLanguagesSubscription(owner: AWSMobileClient.default().identityId!), resultHandler: { (result, transaction, error) in
                 if let result = result{
-                    print("CreateLanguage sub data: " + result.data!.onCreateCodeLanguage!.type) /*result.data!.onCreateUser!.name + " " + result.data!.onCreateUser!.surname!)*/
+                    print("CreateLanguage sub data: " + result.data!.onCreateCodeLanguages!.type) /*result.data!.onCreateUser!.name + " " + result.data!.onCreateUser!.surname!)*/
                     self.runQuery()
                     //self.nameTableView.reloadData()
                 } else if let error = error{
@@ -456,10 +627,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             print("Error when trying to subscribe")
         }
         
-    }
+    }*/
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return languagesList?.count ?? 0
+        return languagesList?.count ?? 0 //personList![0].languageCount ?? 0
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -476,16 +649,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
 //        cell.configCell(name: personList![cellIndex].name!, description: personList![cellIndex].description!)
         
-        cell.configCell(language: languagesList![cellIndex].type!)
+        //let lang = self.personList![0].languages![cellIndex].type
+        
+        cell.configCell(language: languagesList![cellIndex].type! ) //languagesList![cellIndex].type!) //lang!
 
-         cell.descLbl.tag = cellIndex
+        cell.descLbl.tag = Int(languagesList![cellIndex].id)! // cellIndex
          
          
          return cell
     }
+    
+    
+    @IBAction func prepareForUnwind(_ unwindSegue: UIStoryboardSegue) {
+       // let sourceViewController = unwindSegue.source
+        // Use data from the view controller which initiated the unwind segue
+        print("In unwindsegue!!")
+        if unwindSegue.identifier == "unwindToContacts" {
+            
+            //let sourceViewController = unwindSegue.source
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == segueToUserInfo {
+            let destinationVC = segue.destination as! UserInfoViewController
+            if personList!.count > 0 {
+                destinationVC.recievingUserExist = true
+                destinationVC.recievingPerson = personList![0]
+            } else{
+                destinationVC.recievingUserExist = false
+            }
+        }
+    }
         
 
 }
+
+
 
  //                    DispatchQueue.main.async {
     //                        self.signInStateLbl.text = "Logged Out"
@@ -519,7 +719,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //                    default:
 //                        break
 //                    }
-//                }
+//                }sky
 //                print("\(error.localizedDescription)")
 //            }
 //        }

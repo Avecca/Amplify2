@@ -7,7 +7,6 @@ query GetUser($id: ID!) {
     languages {
       id
       type
-      owner
     }
     owner
   }
@@ -25,29 +24,7 @@ query ListUsers(
       languages {
         id
         type
-        owner
       }
-      owner
-    }
-    nextToken
-  }
-}
-query GetCodeLanguage($id: ID!) {
-  getCodeLanguage(id: $id) {
-    id
-    type
-    owner
-  }
-}
-query ListCodeLanguages(
-  $filter: ModelCodeLanguageFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listCodeLanguages(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      type
       owner
     }
     nextToken

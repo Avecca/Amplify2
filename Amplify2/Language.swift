@@ -7,11 +7,15 @@
 //
 
 import Foundation
+import AWSAppSync
 
 class Language {
+    var id: String! //GraphQLID!
     var type : String?
     
-    init(type: String) {
+    init(type: String, id: String!) {   //GraphQLID
         self.type = type
+        self.id = id
+        
     }
 }
