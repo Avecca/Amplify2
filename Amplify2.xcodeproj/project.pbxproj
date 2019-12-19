@@ -62,6 +62,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9352A9FB23AB6DB800E3CA1C /* ContactsView */ = {
+			isa = PBXGroup;
+			children = (
+				93B38CA32396B9EE006808BC /* ViewController.swift */,
+				93B38CB72396C29D006808BC /* NameTableViewCell.swift */,
+			);
+			path = ContactsView;
+			sourceTree = "<group>";
+		};
+		9352A9FC23AB6DED00E3CA1C /* UserInfoView */ = {
+			isa = PBXGroup;
+			children = (
+				9355540623AA72B500908B8E /* UserInfoViewController.swift */,
+			);
+			path = UserInfoView;
+			sourceTree = "<group>";
+		};
 		93B38C932396B9EE006808BC = {
 			isa = PBXGroup;
 			children = (
@@ -87,15 +104,14 @@
 				93B38CB52396BDB6006808BC /* API.swift */,
 				93B38C9F2396B9EE006808BC /* AppDelegate.swift */,
 				93B38CA12396B9EE006808BC /* SceneDelegate.swift */,
-				93B38CA32396B9EE006808BC /* ViewController.swift */,
 				93B38CA52396B9EE006808BC /* Main.storyboard */,
 				93B38CA82396B9F0006808BC /* Assets.xcassets */,
 				93B38CAA2396B9F0006808BC /* LaunchScreen.storyboard */,
 				93B38CAD2396B9F0006808BC /* Info.plist */,
-				93B38CB72396C29D006808BC /* NameTableViewCell.swift */,
+				9352A9FB23AB6DB800E3CA1C /* ContactsView */,
+				9352A9FC23AB6DED00E3CA1C /* UserInfoView */,
 				93B38CBB2396D07F006808BC /* Person.swift */,
 				934F631F23A2539D00006A6B /* Language.swift */,
-				9355540623AA72B500908B8E /* UserInfoViewController.swift */,
 			);
 			path = Amplify2;
 			sourceTree = "<group>";

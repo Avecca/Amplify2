@@ -26,12 +26,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var idTxtView: UITextField!
     
     @IBOutlet weak var userNameBtn: UIButton!
-    @IBOutlet weak var signINStateBtn: UIButton!
+    @IBOutlet weak var userLogStateBarBtn: UIBarButtonItem!
     
     @IBOutlet weak var usernameLbl: UILabel!
-    @IBOutlet weak var userSurnameLbl: UILabel!
-    @IBOutlet weak var userNameTxtField: UITextField!
-    @IBOutlet weak var userSurnameTxtField: UITextField!
     
     
     let segueToUserInfo = "segueToUserInfo"
@@ -80,7 +77,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch(userState){
                 case .signedIn:
                     print("Signed in already")
-                    self.signINStateBtn.setTitle("Log Out", for: .normal)
+                    self.userLogStateBarBtn.title = "Log Out" // setTitle("Log Out", for: .normal)
                     self.userNameBtn.setTitle(AWSMobileClient.default().username, for: .normal )
                         DispatchQueue.main.async {
                             print("Signed in already in queue")
@@ -95,7 +92,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         if let signInState = userState {
                             
                             print("Sign in flow completed: \(signInState)")
-                            self.signINStateBtn.setTitle("Log Out", for: .normal)
+                            self.userLogStateBarBtn.title = "Log Out" //.setTitle("Log Out", for: .normal)
                             self.userNameBtn.setTitle(AWSMobileClient.default().username, for:  .normal)
                             DispatchQueue.main.async {
 
@@ -105,7 +102,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             }else if let error = error {
                                 print("error logging in: \(error.localizedDescription)")
                                 DispatchQueue.main.async {
-                                    self.signINStateBtn.setTitle("Log In", for: .normal)
+                                    self.userLogStateBarBtn.title = "Log In"//.setTitle("Log In", for: .normal)
                                     self.userNameBtn.setTitle("", for: .normal)
                                 }
                             }
@@ -138,61 +135,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-    func updateUser(id: GraphQLID, name: String , surname: String){
-        
-        var mutationInput = UpdateUserInput(id: id)
-        mutationInput.name = name
-        mutationInput.surname = surname
-        
-        appSyncClient?.perform(mutation: UpdateUserMutation(input: mutationInput)){ (result, error) in
-            
-            if let error = error as? AWSAppSyncClientError {
-                print("Error occurred while updating user: \(error.localizedDescription )")
-            }else if let resultError = result?.errors {
-                print("Error UPDATING the userInfo on server: \(resultError)")
-                return
-            }else {
-                print("Success Updating UserINformation")
-                self.userNameTxtField.text = ""
-                self.userSurnameTxtField.text = ""
-                DispatchQueue.main.async {
-            
-                    self.checkUser()
-                }
-            }
-        }
-    }
-    
-    func createUserInfo(name: String, surname: String) {
-        
-       // let mutationInput = CreateUserInput(name: name, surname: surname)
-        let mutationInput = CreateUserInput(name: name, surname: surname, languages: []) // codeList: []
-        //mmutationInput.codeList?.append(CodeLanguagesInput( id: <#GraphQLID#>, type: "Java"))
-        
-        appSyncClient?.perform(mutation: CreateUserMutation(input: mutationInput)){ (result, error) in
-           // self.runQuery()
-            if let error = error as? AWSAppSyncClientError {
-                print("Error mutating Creating User: \(error.localizedDescription)")
-            }
-            if let resultError = result?.errors{
-                print("Error saving the USER to server trhough mutation: \(resultError)")
-                return
-            }
-            print("Mutation Creating User complete.")
-            
-            print("NEW ID = " + (result?.data?.createUser!.id)!)
-            self.userNameTxtField.text = ""
-            self.userSurnameTxtField.text = ""
-            
-            // because the mutation will not complete before the query is sent(asynchronus), do callback
-            DispatchQueue.main.async {
-           
-                   self.checkUser()
-               }
-            
-        }
-        
-    }
     
     func checkUser(){
     
@@ -233,17 +175,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.nameTableView.reloadData()
             
             if(self.personList!.count > 0){
-                self.usernameLbl.text = self.personList![0].name
-                self.userSurnameLbl.text = self.personList![0].surname
+                self.usernameLbl.text = self.personList![0].name! + " " + self.personList![0].surname!
                 
                 for lan in self.personList![0].languages! {
                     print(lan.id + " " + lan.type!)
                     self.languagesList?.append(lan)
                 }
                 
+                self.nameTableView.reloadData()
+                
             } else if (self.personList!.count < 1){
-                self.usernameLbl.text = "name"
-                self.userSurnameLbl.text = "surname"
+                self.usernameLbl.text = "Edit User to add a name"
             }
  
         }
@@ -272,15 +214,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //
 //    }
     
-    @IBAction func logOutBtnPressed(_ sender: Any) {
+
+    
+    @IBAction func userLogStateBarBtnPressed(_ sender: Any) {
         AWSMobileClient.default().signOut()
         
         
         do {
             personList = []
             languagesList = []
-            usernameLbl.text = "name"
-            userSurnameLbl.text = "surname"
+            usernameLbl.text = "Add a name in Edit User"
             nameLbl.text = ""
             idTxtView.text = ""
             try appSyncClient?.clearCaches()
@@ -293,9 +236,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
                 self.signInState()
         }
+        
     }
     
-
     
     @IBAction func infoBtnPressed(_ sender: Any) {
         self.infoLbl.text = ""
@@ -632,7 +575,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return languagesList?.count ?? 0 //personList![0].languageCount ?? 0
+        if AWSMobileClient.default().isSignedIn {
+            return languagesList?.count ?? 0 //personList![0].languageCount ?? 0
+        } else {
+            return 0
+        }
+
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {

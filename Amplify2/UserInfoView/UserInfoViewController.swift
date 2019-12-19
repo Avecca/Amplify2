@@ -10,7 +10,7 @@ import UIKit
 import AWSAppSync
 import AWSMobileClient
 
-class UserInfoViewController: UIViewController {
+class UserInfoViewController: UIViewController, UITextFieldDelegate {
     
     var appSyncClient: AWSAppSyncClient?
     private var user: Person?
@@ -19,6 +19,7 @@ class UserInfoViewController: UIViewController {
     @IBOutlet weak var surNameTextView: UITextField!
     @IBOutlet weak var saveSuccessLbl: UILabel!
     @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet weak var saveChangesBtn: UIButton!
     
     var recievingPerson: Person?
     var recievingUserExist: Bool = false
@@ -28,6 +29,8 @@ class UserInfoViewController: UIViewController {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
+        firstNameTextView.delegate = self
+        surNameTextView.delegate = self
 
         if recievingUserExist && recievingPerson != nil {
             user = recievingPerson
@@ -50,16 +53,6 @@ class UserInfoViewController: UIViewController {
         }
     }
     
-    @IBAction func saveChangesPressed(_ sender: Any) {
-      if firstNameTextView.text != "" && surNameTextView.text != "" {
-            if recievingUserExist {
-                updateUserInfo(id: user!.id ,name: firstNameTextView.text, surname: surNameTextView.text)
-            }else{
-                createUserInfo(name: firstNameTextView.text, surname: surNameTextView.text)
-            }
-        }
-        
-    }
     
     func updateUserInfo(id: GraphQLID ,name: String!, surname: String!){
         
@@ -78,7 +71,7 @@ class UserInfoViewController: UIViewController {
                 print("Success Updating UserInformation")
 
                 DispatchQueue.main.async {
-                    self.saveSuccessLbl.isHidden = false
+                    self.saveSucessViewChanges()
                 }
             }
         }
@@ -107,11 +100,29 @@ class UserInfoViewController: UIViewController {
             
              // because the mutation will not complete before the query is sent(asynchronus), do callback
              DispatchQueue.main.async {
-                self.saveSuccessLbl.isHidden = false
-                    
+                self.saveSucessViewChanges()
                 }
              
          }
+    }
+    func saveSucessViewChanges(){
+        self.saveSuccessLbl.isHidden = false
+        self.saveChangesBtn.isHidden = true
+        
+    }
+    
+    @IBAction func saveChangesPressed(_ sender: Any) {
+      if firstNameTextView.text != "" && surNameTextView.text != "" {
+            if recievingUserExist {
+                updateUserInfo(id: user!.id ,name: firstNameTextView.text, surname: surNameTextView.text)
+            }else{
+                createUserInfo(name: firstNameTextView.text, surname: surNameTextView.text)
+            }
+        }
+        
+    }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        saveChangesBtn.isHidden = false
     }
 
 }
