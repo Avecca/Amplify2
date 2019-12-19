@@ -22,8 +22,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var userInfoExists : Bool = false
     @IBOutlet weak var nameLbl: UITextField!
     @IBOutlet weak var nameTableView: UITableView!
-    @IBOutlet weak var infoLbl: UILabel!
-    @IBOutlet weak var idTxtView: UITextField!
     
     @IBOutlet weak var userNameBtn: UIButton!
     @IBOutlet weak var userLogStateBarBtn: UIBarButtonItem!
@@ -49,12 +47,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //subscribe()
        // runQuery()
         print(self.personList?.count as Any)
-        //nameTableView.reloadData()
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        //TODO if from UserInfo and changes made only fetch those
         if AWSMobileClient.default().isSignedIn {
             DispatchQueue.main.async {
                     print("Signed in fetching info")
@@ -63,11 +60,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     //self.runQuery()
             }
         }
-    
     }
     
     func signInState(){
-        
 
         AWSMobileClient.default().initialize { (userState, error) in
             if let userState = userState {
@@ -192,40 +187,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
    
     }
     
-//    @IBAction func logOutPressed(_ sender: Any) {
-//
-//        AWSMobileClient.default().signOut()
-//
-//
-//        do {
-//
-//            try appSyncClient?.clearCaches()
-//
-//            DispatchQueue.main.async {
-//
-//                    self.signInState()
-//
-//            }
-//        } catch let err  {
-//            print(err.localizedDescription)
-//        }
-//
-//
-//
-//    }
-    
-
     
     @IBAction func userLogStateBarBtnPressed(_ sender: Any) {
-        AWSMobileClient.default().signOut()
         
+        AWSMobileClient.default().signOut()
         
         do {
             personList = []
             languagesList = []
             usernameLbl.text = "Add a name in Edit User"
             nameLbl.text = ""
-            idTxtView.text = ""
+            //idTxtView.text = ""
             try appSyncClient?.clearCaches()
         } catch let err  {
             print(err.localizedDescription)
@@ -240,26 +212,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
-    @IBAction func infoBtnPressed(_ sender: Any) {
-        self.infoLbl.text = ""
-        print("TRYING TO Fetch Specific")
-
-        if idTxtView.text!.count < 1 {
-            return
-        }else {
-            let idTxt = idTxtView.text
-           // runSpecificQuery(id: idTxt!)
-        }
-        
-        //871f2c0b-e9dc-440d-8a71-593452abaa34
-        
-    }
     @IBAction func saveName(_ sender: Any) {
         
         print("TRYING TO SAVE")
         let nameTxt = nameLbl.text ?? "testname"
         let perID = personList![0].id!
-        if perID != nil{
+        if perID != "" {
             addCodeLanguageMutation(id: perID, codeName:  nameTxt)
         }
         
@@ -269,25 +227,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func deleteBtnPressed(_ sender: Any) {
         
         print("TRYING TO DELETE")
-        if idTxtView.text!.count < 1 {
-            return
-        }else {
-            let idTxt = idTxtView.text
-          //  runDeleteSpecific(id: idTxt!)
-        }
+//        if idTxtView.text!.count < 1 {
+//            return
+//        }else {
+//            let idTxt = idTxtView.text
+//          //  runDeleteSpecific(id: idTxt!)
+//        }
     }
     
     @IBAction func updateBtnPressed(_ sender: Any) {
         print("TRYING TO UPDATE")
-        
-        if idTxtView.text!.count < 1 {
-            return
-        }else {
-            let idTxt = idTxtView.text
-           // runUpdateSpecific(id: idTxt!)
-        }
-        
-        
+//
+//        if idTxtView.text!.count < 1 {
+//            return
+//        }else {
+//            let idTxt = idTxtView.text
+//           // runUpdateSpecific(id: idTxt!)
+//        }
     }
     @IBAction func printNames(_ sender: Any) {
         fetchLanguagesFromUser()
@@ -446,11 +402,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         
     }*/
-  /*
+  
+    //TODO not in use, only as example
      func runSpecificQuery( id: String){
          print("Entering specific query")
         //var pers = ""
-        appSyncClient?.fetch(query: GetCodeLanguagesQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
+        //GetCodeLanguagesQuery(id: id)
+        appSyncClient?.fetch(query: GetUserQuery(id: id), cachePolicy: .returnCacheDataAndFetch) { (result, error) in
              
              if error != nil{
                  print(error?.localizedDescription ?? "error fetching")
@@ -461,8 +419,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             var codeType = ""
             //result?.data?.getTodo?.snapshot {
             if(result != nil){
-                
-                codeType = result?.data?.getCodeLanguages?.type ?? "not found"
+                 //getCodeLanguages?.type
+                codeType = result?.data?.getUser?.name ?? "not found"
 //                    (((result?.data?.getUser!.name) ?? "ntfound") + " " + (result?.data?.getUser!.surname ?? "surname") )
                 // pers += (result?.data?.getTodo!.description)!
             
@@ -471,12 +429,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 print(" ")
             }
             
-            self.infoLbl.text =  codeType
+            //self.infoLbl.text =  codeType
         }
 
            // [($0?.name)!] = ($0?.description)!
         //871f2c0b-e9dc-440d-8a71-593452abaa34
-    } */
+    }
     
     
     func fetchLanguagesFromUser(){
