@@ -27,6 +27,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //TODO SPara Languagelist[0] som en person
     var languagesList : [Language]?
     var userInfoExists : Bool = false
+    let cellSpacingHeight: CGFloat = 3
     
     
     let segueToUserInfo = "segueToUserInfo"
@@ -363,48 +364,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
              
     
     
-   // Tableview Data and Delegates
+   //Mark:  -Tableview Data and Delegates
     
+    
+    //changed sections and rows number to make each row a sections
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         if AWSMobileClient.default().isSignedIn {
             return languagesList?.count ?? 0 //personList![0].languageCount ?? 0
         } else {
             return 0
         }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return cellSpacingHeight
+    }
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
 
+        let footerView = UIView()
+        footerView.backgroundColor = UIColor.clear
+        return footerView
+
+        return footerView  //view
+        
+        //        let view:UIView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.bounds.size.width, height: cellSpacingHeight))
+        //        view.backgroundColor = .clear
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
- /*   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath){
-            if cell.isSelected {
-                
-                if let language = languagesList?.first(where: {$0.id == String(cell.tag) }){
-                    print(language.id + " " + language.type!)
-                    
-                    let destinationVC = ContactInfoViewController()
-                    destinationVC.recievingLanguage = language
-                    destinationVC.recievingUser = personList![0]
-                    self.performSegue(withIdentifier: segueToContactInfo, sender: self)
-                         
-                }else{
-                    return
-                }
-                
-                
-            }
-        }
-    }
- */
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = nameTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! NameTableViewCell
          
-        let cellIndex = indexPath.item  //nameclick.tag = cellindex
+        let cellIndex = indexPath.section //indexPath.item  //nameclick.tag = cellindex
         cell.configCell(language: languagesList![cellIndex].type! ) //languagesList![cellIndex].type!) //lang!
         cell.descLbl.tag = Int(languagesList![cellIndex].id)! // cellIndex
         cell.tag = Int(languagesList![cellIndex].id)!
@@ -412,10 +408,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //        cell.configCell(name: personList![cellIndex].name!, description: personList![cellIndex].description!)
                 
                 //let lang = self.personList![0].languages![cellIndex].type
+        cell.backgroundColor = UIColor.white
          
         return cell
     }
     
+    
+    //Mark: --Segue
     
     @IBAction func prepareForUnwind(_ unwindSegue: UIStoryboardSegue) {
        // let sourceViewController = unwindSegue.source
@@ -464,6 +463,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
        }
         
     }
+    
+    
+    //Mark: -- Overrrides
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//
+//        let padding = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+//        nameTableView.bounds = nameTableView.bounds.inset(by: padding)
+//        //frame
+//    }
     
     
     
@@ -567,6 +580,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
       }
       
   }*/
+
+
+// Mark: - Discareded TableViewCode
+
+    //Using footer instead
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return cellSpacingHeight
+//    }
+//
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let headerView = UIView()
+//        headerView.backgroundColor = UIColor.clear
+//        return headerView
+//    }
+    
+ /*   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath){
+            if cell.isSelected {
+                
+                if let language = languagesList?.first(where: {$0.id == String(cell.tag) }){
+                    print(language.id + " " + language.type!)
+                    
+                    let destinationVC = ContactInfoViewController()
+                    destinationVC.recievingLanguage = language
+                    destinationVC.recievingUser = personList![0]
+                    self.performSegue(withIdentifier: segueToContactInfo, sender: self)
+                         
+                }else{
+                    return
+                }
+                
+                
+            }
+        }
+    }
+ */
 
 
 
